@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+// Define a variable for common properties to reduce repetition
+$border-color: #bbb;
+$border-radius: 3px;
+$box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+
+.viz {
+  width: 600px;
+  height: 600px;
+  padding: 16px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+}
+
+.app {
+  position: relative;
+  width: 100%;
+  height: 1000px;
+  padding: 16px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+}

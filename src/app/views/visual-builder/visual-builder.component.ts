@@ -1,19 +1,21 @@
 import {
-  ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA
+  ElementRef,
+  ChangeDetectorRef,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgZone,
 } from '@angular/core';
-import { QlikAPIService } from '../../services/qlik-api.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { QlikAPIService } from '../../services/qlik-api.service';
 
 @Component({
   selector: 'app-visual-builder',
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './visual-builder.component.html',
-  styleUrls: ['./visual-builder.component.scss'],
+  styleUrl: './visual-builder.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class VisualBuilderComponent {
@@ -21,11 +23,12 @@ export class VisualBuilderComponent {
   masterDimensions: { id: string; label: string }[] = [];
   masterMeasures: { id: string; label: string }[] = [];
 
-  selectedDimensions: string[] = ['rfm_score_group'];
-  selectedMeasures: string[] = ['Churn Rate'];
-
+  selectedDimensions: string[] = [];
+  selectedMeasures: string[] = [];
   selectedChartType: string = 'barchart';
+
   htmlString: SafeHtml = '';
+  loading = false;
 
   chartTypes: string[] = [
     'scatterplot',
@@ -36,80 +39,89 @@ export class VisualBuilderComponent {
     'combochart',
   ];
 
-  loading = false;
-
   constructor(
-    private qlikAPIService: QlikAPIService,
+    private el: ElementRef,
+    private renderer: ElementRef,
+    private sanitizer: DomSanitizer,
+    private zone: NgZone,
     private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private qlikAPIService: QlikAPIService
   ) {}
 
   ngOnInit(): void {
     this.loading = true;
     this.qlikAPIService.getMasterItems().then((data) => {
-      this.masterMeasures = data.measures.map((measure) => ({
-        id: measure.id + '',
-        label: measure.label as string,
-      }));
-      this.masterDimensions = data.dimensions.map((dimension) => ({
-        id: dimension.id + '',
-        label: dimension.label as string,
-      }));
+      this.masterDimensions = data.dimensions
+        .filter((item) => item.id !== undefined)
+        .map((item) => ({ id: item.id as string, label: item.label }));
+      this.masterMeasures = data.measures
+        .filter((item) => item.id !== undefined)
+        .map((item) => ({ id: item.id as string, label: item.label }));
       this.loading = false;
       this.cdr.detectChanges();
     });
   }
 
-  submitSelection(): void {
-    // Just deduplicate — no need to wrap here anymore
-    this.selectedDimensions = Array.from(new Set(this.selectedDimensions));
-    this.selectedMeasures = Array.from(new Set(this.selectedMeasures));
-  
-    console.log('✅ Selected Dimensions:', this.selectedDimensions);
-    console.log('✅ Selected Measures:', this.selectedMeasures);
-    console.log('✅ Selected Chart Type:', this.selectedChartType);
-  
-    this.createQlikEmbed();
-  }
-
   onToggle(label: string, type: 'dimension' | 'measure', event: any): void {
     if (type === 'dimension') {
       if (event.target.checked) {
-        this.selectedDimensions.push(label);
+        this.selectedDimensions.push(`[${label}]`);
       } else {
-        this.selectedDimensions = this.selectedDimensions.filter((l) => l !== label);
+        this.selectedDimensions = this.selectedDimensions.filter((d) => d !== `[${label}]`);
       }
     } else {
       if (event.target.checked) {
-        this.selectedMeasures.push(label);
+        this.selectedMeasures.push(`[${label}]`);
       } else {
-        this.selectedMeasures = this.selectedMeasures.filter((l) => l !== label);
+        this.selectedMeasures = this.selectedMeasures.filter((m) => m !== `[${label}]`);
       }
     }
   }
 
+  submitSelection(): void {
+    // Deduplicate
+    this.selectedDimensions = Array.from(new Set(this.selectedDimensions));
+    this.selectedMeasures = Array.from(new Set(this.selectedMeasures));
+
+    console.log('✅ Selected Dimensions:', this.selectedDimensions);
+    console.log('✅ Selected Measures:', this.selectedMeasures);
+    console.log('✅ Selected Chart Type:', this.selectedChartType);
+
+    this.createQlikEmbed();
+  }
+
   private createQlikEmbed(): void {
-    // DO NOT wrap, assume already "[rfm_score_group]" format
-    const dimensions = this.selectedDimensions.map((d) => `"${d}"`).join(', ');
-    const measures = this.selectedMeasures.map((m) => `"${m}"`).join(', ');
-  
+    const dimString = this.selectedDimensions.map((d) => `"${d}"`).join(', ');
+    const measString = this.selectedMeasures.map((m) => `"${m}"`).join(', ');
+
     const qlikEmbedHtml = `
       <qlik-embed
         id="visualization"
         ui="analytics/chart"
         app-id="${this.appId}"
         type="${this.selectedChartType}"
-        dimensions='[${dimensions}]'
-        measures='[${measures}]'>
+        dimensions='[${dimString}]'
+        measures='[${measString}]'>
       </qlik-embed>`;
-  
+
+    // Clear and set HTML
     this.htmlString = this.sanitizer.bypassSecurityTrustHtml('');
     this.htmlString = this.sanitizer.bypassSecurityTrustHtml(qlikEmbedHtml);
-  
     this.cdr.detectChanges();
-  
-    console.log('✅ Rendered htmlString:', qlikEmbedHtml);
+
+    // Manually trigger connectedCallback
+    setTimeout(() => {
+      const el = document.querySelector('qlik-embed');
+      if (el) {
+        customElements.whenDefined('qlik-embed').then(() => {
+          (el as any).connectedCallback?.();
+          console.log('✅ Qlik Embed rendered and hydrated:', qlikEmbedHtml);
+        });
+      }
+    }, 100);
   }
-  
-  
+
+  ngAfterViewInit(): void {
+    this.createQlikEmbed();
+  }
 }

@@ -1,1 +1,47 @@
-<p>visual-builder works!</p>
+<div>
+    <!-- Loader -->
+    <div *ngIf="loading" class="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-10">
+      <div class="loader w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  
+    <!-- Simple Selection UI -->
+    <div *ngIf="!loading" class="p-4">
+      <h2 class="text-xl font-semibold mb-4">Select Dimensions, Measures, and Chart</h2>
+  
+      <div class="mb-4">
+        <label>Dimensions:</label>
+        <div *ngFor="let dim of masterDimensions">
+          <label>
+            <input type="checkbox" [value]="dim.label" (change)="onToggle(dim.label, 'dimension', $event)" />
+            {{ dim.label }}
+          </label>
+        </div>
+      </div>
+  
+      <div class="mb-4">
+        <label>Measures:</label>
+        <div *ngFor="let meas of masterMeasures">
+          <label>
+            <input type="checkbox" [value]="meas.label" (change)="onToggle(meas.label, 'measure', $event)" />
+            {{ meas.label }}
+          </label>
+        </div>
+      </div>
+  
+      <div class="mb-4">
+        <label>Chart Type:</label>
+        <div *ngFor="let chart of chartTypes">
+          <label>
+            <input type="radio" name="chartType" [value]="chart" [(ngModel)]="selectedChartType" />
+            {{ chart }}
+          </label>
+        </div>
+      </div>
+  
+      <button (click)="submitSelection()" class="bg-blue-500 text-white py-1 px-4 rounded mt-2">Submit</button>
+    </div>
+  
+    <!-- Chart Output -->
+    <div class="mt-6" [innerHTML]="htmlString"></div>
+  </div>
+  

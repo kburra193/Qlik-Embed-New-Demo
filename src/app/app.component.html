@@ -1,9 +1,10 @@
+<nav class="p-4 bg-gray-100 flex gap-4 shadow">
+  <a routerLink="/qlik" routerLinkActive="font-bold">Qlik Sheet</a>
+  <a routerLink="/d3" routerLinkActive="font-bold">D3 Visual</a>
+  <a routerLink="/gpt" routerLinkActive="font-bold">GPT Assistant</a>
+  <a routerLink="/builder" routerLinkActive="font-bold">Visual Builder</a>
+</nav>
 
-<h1>Hello qlik-embed!</h1>
-<p>Here's an example of an entire app</p>
-<div class="app">
-  <qlik-embed
-    ui="classic/app"
-    app-id="7471d89a-3fce-4778-aeb8-e313fe8271c2"
-  ></qlik-embed>
+<div class="p-4">
+  <router-outlet></router-outlet>
 </div>

@@ -95,15 +95,15 @@ export class VisualBuilderComponent {
     const measString = this.selectedMeasures.map((m) => `"${m}"`).join(', ');
 
     const qlikEmbedHtml = `
-      <qlik-embed
-        id="visualization"
-        ui="analytics/chart"
-        app-id="${this.appId}"
-        type="${this.selectedChartType}"
-        dimensions='[${dimString}]'
-        measures='[${measString}]'>
-      </qlik-embed>`;
-
+    <qlik-embed
+      id="visualization"
+      ui="analytics/chart"
+      app-id="${this.appId}"
+      type="${this.selectedChartType}"
+      dimensions='${JSON.stringify(this.selectedDimensions)}'
+      measures='${JSON.stringify(this.selectedMeasures)}'
+    ></qlik-embed>`;
+  
     // Clear and set HTML
     this.htmlString = this.sanitizer.bypassSecurityTrustHtml('');
     this.htmlString = this.sanitizer.bypassSecurityTrustHtml(qlikEmbedHtml);

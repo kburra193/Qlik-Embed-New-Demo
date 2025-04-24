@@ -25,7 +25,7 @@ export class QlikAPIService {
   async getMasterItems() {
     console.log('start open session');
     const appSession = openAppSession({
-      appId: '32718960-32ba-4f76-90b4-5c5796a7f1b8',
+      appId: '615ed533-b2d0-48cc-8d43-db57cd809305',  //churn predictions ML app id
     });
     console.log('opened session');
     const app = await appSession.getDoc();

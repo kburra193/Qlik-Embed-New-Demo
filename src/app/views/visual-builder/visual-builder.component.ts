@@ -33,16 +33,16 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class VisualBuilderComponent {
-  appId = '32718960-32ba-4f76-90b4-5c5796a7f1b8';
+  appId = '615ed533-b2d0-48cc-8d43-db57cd809305'; //added chrun predictions ML app id
   masterDimensions: { id: string; label: string }[] = [];
   masterMeasures: { id: string; label: string }[] = [];
   /* selectedDimensions: string[] = ['Product Type'];
   selectedMeasures: string[] = ['# of Products']; */
-  selectedDimensions: string[] = ['rfm_score_group'];
-  selectedMeasures: string[] = ['Churn Rate'];
+  selectedDimensions: string[] = ['Churned_predicted'];
+  selectedMeasures: string[] = ['#Account IDs'];
 
-  dimensions = `"[rfm_score_group]"`;
-  measures = `"[Churn Rate]"`;
+  dimensions = `"[Churned_predicted]"`;
+  measures = `"[#Account IDs]"`;
 
   selectedChartType: string = 'barchart';
   htmlString: SafeHtml = '';

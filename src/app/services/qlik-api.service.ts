@@ -12,7 +12,7 @@ export class QlikAPIService {
     authType: 'oauth2', // The type of authentication to use
     host: 'kassovitz.us.qlikcloud.com', // The host of the Qlik cloud tenant
     clientId: 'ad47b6faa9a6863ad6b378f151ff6cff', // The client ID for OAuth2 authentication
-    redirectUri: 'http://localhost:4200/assets/oauth-redirect.html', // The redirect URI after successful authentication
+    redirectUri: 'http://localhost:4200/assets/oauth-callback.html', // The redirect URI after successful authentication
     accessTokenStorage: 'session', // Where to store the access token
   };
 

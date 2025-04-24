@@ -1,40 +1,28 @@
-
-<!-- qlik-embed.component.html -->
-<div class="container">
-  <h1>qlik/embed-web-components quickstart example</h1>
-  <h2>
-    For a step-by-step tutorial
-    <a
-      href="https://qlik.dev/embed/qlik-embed/quickstart/qlik-embed-webcomponent-quickstart/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      click here
-    </a>.
-  </h2>
-  <h2>Make sure to configure the html files to point to your Qlik Cloud tenant.</h2>
-</div>
-
-<div class="container">
-  <h2>qlik-embed analytics/chart embeds a chart in the page.</h2>
-  <h3><i>Renders only nebula.js visualizations.</i></h3>
-  <div class="viz">
-    <qlik-embed
-      id="visualization"
-      ui="analytics/chart"
-      [attr.app-id]="appId"
-      [attr.object-id]="objectId"
-    ></qlik-embed>
+<div class="dashboard-header">
+  <div class="header-content">
+    <img src="assets/churn-icon.png" alt="Predictions Icon" class="logo-icon" />
+    <h1>Churn Analytics Dashboard</h1>
   </div>
 </div>
 
-<div class="container">
-  <h2>qlik-embed classic/app embeds the full Qlik Sense client in the page.</h2>
-  <div class="classic-app">
-    <qlik-embed
-      ui="classic/app"
-      [attr.app-id]="appId"
-      [attr.sheet-id]="sheetId"
-    ></qlik-embed>
+
+<!-- Filter Panel -->
+<div class="filter-panel">
+  <qlik-embed ui="analytics/chart" [attr.app-id]="appId" [attr.object-id]="filterPanelId"></qlik-embed>
+</div>
+
+<!-- Sheet Tab Buttons -->
+<div class="sheet-tabs">
+  <button *ngFor="let key of sheetKeys" [class.active]="currentSheetId === sheetIds[key]"
+    (click)="switchSheet(sheetIds[key])">
+    {{ key | titlecase }}
+  </button>
+</div>
+
+<!-- Embedded Sheet Container -->
+<div class="sheet-container">
+  <div class="qlik-frame-wrapper">
+    <qlik-embed id="qlik-sheet-view" ui="classic/app" [attr.app-id]="appId"
+      [attr.sheet-id]="currentSheetId"></qlik-embed>
   </div>
 </div>

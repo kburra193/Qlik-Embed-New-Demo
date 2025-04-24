@@ -1,44 +1,95 @@
-body,
-html {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  font-size: 14px;
-  background-color: #f5f5f5;
+.container {
+  padding: 16px;
+  background-color: #ffffff;
   color: #333;
+  font-family: sans-serif;
+}
+
+.selections-bar {
+  margin-bottom: 16px;
+}
+
+.filter-panel {
+  width: 1800px;
+  margin-bottom: 16px;
+  height: 100px;
+}
+
+
+
+.sheet-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sheet-tabs button {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.sheet-tabs button.active {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+}
+
+.sheet-container {
+  width: 100%;
+  max-width: 1600px;
+  height: 720px;
+  margin: 0 auto;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.qlik-frame-wrapper {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
-.container {
-  padding: 8px;
-  gap: 8px;
-  position: relative;
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  box-sizing: border-box;
+.qlik-embed::part(content),
+.qlik-embed::part(embed) {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
 }
 
-.classic-app {
-  height: 800px;
-  width: 1200px;
-  border: 1px solid #bbb;
-  flex-grow: 1;
-  border-radius: 3px;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  box-sizing: border-box;
-  overflow: auto;
-}
+.dashboard-header {
+  background-color: #f8f9fa;
+  padding: 24px 0;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
 
-.viz {
-  width: 600px;
-  height: 600px;
-  padding: 16px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-  position: relative;
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+
+  .logo-icon {
+    width: 68px;
+    height: 48px;
+  }
 }

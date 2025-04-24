@@ -1,5 +1,16 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as d3 from 'd3';
+import { sankey, sankeyLinkHorizontal, SankeyNode, SankeyLink } from 'd3-sankey';
+
+interface CustomNode extends SankeyNode<{}, CustomLink> {
+  name: string;
+  color?: string;
+  index?: number;
+}
+
+interface CustomLink extends SankeyLink<CustomNode, {}> {
+  value: number;
+}
 
 @Component({
   selector: 'app-d3-visual',
@@ -7,70 +18,120 @@ import * as d3 from 'd3';
   styleUrls: ['./d3-visual.component.scss']
 })
 export class D3VisualComponent implements AfterViewInit {
+  rawData: { nodes: CustomNode[]; links: CustomLink[] } = { nodes: [], links: [] };
+  filters = {
+    plans: [] as string[],
+    selectedPlan: 'All'
+  };
 
-  ngAfterViewInit() {
-    const data = [
-      { segment: 'A', churn: 0.12 },
-      { segment: 'B', churn: 0.25 },
-      { segment: 'C', churn: 0.18 },
-      { segment: 'D', churn: 0.05 }
-    ];
+  async ngAfterViewInit(): Promise<void> {
+    const url = `${window.location.origin}/assets/sankey_customer_journey_pretty.json`;
+    const json = await fetch(url).then(res => res.json());
+    this.rawData = json;
 
-    const svg = d3.select('#d3-chart');
-    const width = +svg.attr('width');
-    const height = +svg.attr('height');
+    this.filters.plans = Array.from(
+      new Set(
+        this.rawData.nodes
+          .map(n => n.name)
+          .filter(name => name.toLowerCase().includes('plan'))
+      )
+    );
 
-    const x = d3.scaleBand()
-      .domain(data.map(d => d.segment))
-      .range([40, width - 20])
-      .padding(0.4);
+    this.renderChart();
+  }
 
-    const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.churn)! * 1.2])
-      .range([height - 40, 20]);
+  onFilterChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.filters.selectedPlan = value;
+    this.renderChart();
+  }
 
-    // X Axis
+  filteredData() {
+    if (this.filters.selectedPlan === 'All') {
+      return this.rawData;
+    }
+
+    const startNodeIndex = this.rawData.nodes.findIndex(n => n.name === this.filters.selectedPlan);
+    if (startNodeIndex === -1) return this.rawData;
+
+    const usedLinks = this.rawData.links.filter(link => link.source === startNodeIndex);
+
+    const nodeSet = new Set<number>();
+    usedLinks.forEach(link => {
+      nodeSet.add(link.source as number);
+      nodeSet.add(link.target as number);
+    });
+
+    const filteredNodes = this.rawData.nodes
+      .map((node, index) => ({ ...node, index }))
+      .filter((_, idx) => nodeSet.has(idx));
+
+    const indexMap = new Map<number, number>();
+    filteredNodes.forEach((node, newIndex) => indexMap.set(node.index!, newIndex));
+
+    const filteredLinks = usedLinks.map(link => ({
+      ...link,
+      source: indexMap.get(link.source as number)!,
+      target: indexMap.get(link.target as number)!
+    }));
+
+    return { nodes: filteredNodes, links: filteredLinks };
+  }
+
+  renderChart(): void {
+    const { nodes, links } = this.filteredData();
+    if (!nodes.length || !links.length) return;
+
+    const width = 1000;
+    const height = 600;
+
+    const svg = d3.select('#sankeyChart')
+      .attr('width', width)
+      .attr('height', height);
+
+    svg.selectAll('*').remove();
+
+    const sankeyLayout = sankey<CustomNode, CustomLink>()
+      .nodeWidth(20)
+      .nodePadding(15)
+      .extent([[1, 1], [width - 1, height - 6]]);
+
+    const graph = sankeyLayout({
+      nodes: nodes.map(d => ({ ...d })),
+      links: links.map(d => ({ ...d }))
+    });
+
     svg.append('g')
-      .attr('transform', `translate(0, ${height - 40})`)
-      .call(d3.axisBottom(x));
+      .selectAll('path')
+      .data(graph.links)
+      .join('path')
+      .attr('d', sankeyLinkHorizontal())
+      .attr('fill', 'none')
+      .attr('stroke', '#aaa')
+      .attr('stroke-width', d => Math.max(1, d.width ?? 0))
+      .attr('opacity', 0.6)
+      .append('title')
+      .text(d => `${(d.source as CustomNode).name} → ${(d.target as CustomNode).name}\n${d.value}`);
 
-    // Y Axis
-    svg.append('g')
-      .attr('transform', `translate(40, 0)`)
-      .call(d3.axisLeft(y).tickFormat(d3.format(".0%")));
+    const node = svg.append('g')
+      .selectAll('g')
+      .data(graph.nodes)
+      .join('g')
+      .attr('transform', d => `translate(${d.x0},${d.y0})`);
 
-    // Tooltip div
-    const tooltip = d3.select('#tooltip');
+    node.append('rect')
+      .attr('height', d => (d.y1 ?? 0) - (d.y0 ?? 0))
+      .attr('width', d => (d.x1 ?? 0) - (d.x0 ?? 0))
+      .attr('fill', d => d.color || '#69b3a2');
 
-    // Bars with animation
-    svg.selectAll('.bar')
-      .data(data)
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', d => x(d.segment)!)
-      .attr('width', x.bandwidth())
-      .attr('y', height - 40)
-      .attr('height', 0)
-      .attr('fill', '#3B82F6')
-      .on('mouseover', function (event, d) {
-        tooltip
-          .style('opacity', 1)
-          .html(`Segment ${d.segment}<br/>Churn: ${(d.churn * 100).toFixed(1)}%`)
-          .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY - 20}px`);
-      })
-      .on('mousemove', function (event) {
-        tooltip
-          .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY - 20}px`);
-      })
-      .on('mouseout', function () {
-        tooltip.style('opacity', 0);
-      })
-      .transition()
-      .duration(800)
-      .attr('y', d => y(d.churn))
-      .attr('height', d => height - 40 - y(d.churn));
+    node.append('text')
+      .attr('x', -6)
+      .attr('y', d => ((d.y1 ?? 0) - (d.y0 ?? 0)) / 2)
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
+      .text(d => d.name)
+      .filter(d => (d.x0 ?? 0) < width / 2)
+      .attr('x', 26)
+      .attr('text-anchor', 'start');
   }
 }

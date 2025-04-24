@@ -1,6 +1,13 @@
-<div>
-    <h2 class="text-xl font-bold mb-4">Churn Rate by Segment (D3.js)</h2>
-    <div id="tooltip" class="absolute bg-black text-white text-xs px-2 py-1 rounded opacity-0 pointer-events-none"></div>
-    <svg id="d3-chart" width="600" height="400"></svg>
-  </div>
-  
+<h2>Customer Journey to Churn</h2>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <label>Filter by Plan:</label>
+  <select (change)="onFilterChange($event)">
+    <option value="All">All</option>
+    <option *ngFor="let plan of filters.plans" [value]="plan">{{ plan }}</option>
+  </select>
+</div>
+
+<!-- Chart -->
+<svg id="sankeyChart"></svg>

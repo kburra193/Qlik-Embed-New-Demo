@@ -1,0 +1,223 @@
+{
+  "nodes": [
+    {
+      "name": "Purple Plan",
+      "color": "#1f77b4"
+    },
+    {
+      "name": "Penalties: 3\u20135",
+      "color": "#ff7f0e"
+    },
+    {
+      "name": "Rating: Mid",
+      "color": "#2ca02c"
+    },
+    {
+      "name": "Churn: No",
+      "color": "#d62728"
+    },
+    {
+      "name": "Red Plan",
+      "color": "#1f77b4"
+    },
+    {
+      "name": "Penalties: 1\u20132",
+      "color": "#ff7f0e"
+    },
+    {
+      "name": "Rating: High",
+      "color": "#2ca02c"
+    },
+    {
+      "name": "Green Plan",
+      "color": "#1f77b4"
+    },
+    {
+      "name": "Penalties: 0",
+      "color": "#ff7f0e"
+    },
+    {
+      "name": "Churn: Yes",
+      "color": "#d62728"
+    },
+    {
+      "name": "Rating: Low",
+      "color": "#2ca02c"
+    },
+    {
+      "name": "Blue Plan",
+      "color": "#1f77b4"
+    },
+    {
+      "name": "Penalties: 6+",
+      "color": "#ff7f0e"
+    }
+  ],
+  "links": [
+    {
+      "source": 0,
+      "target": 1,
+      "value": 165
+    },
+    {
+      "source": 1,
+      "target": 2,
+      "value": 333
+    },
+    {
+      "source": 2,
+      "target": 3,
+      "value": 1487
+    },
+    {
+      "source": 4,
+      "target": 5,
+      "value": 138
+    },
+    {
+      "source": 5,
+      "target": 2,
+      "value": 1003
+    },
+    {
+      "source": 0,
+      "target": 5,
+      "value": 574
+    },
+    {
+      "source": 5,
+      "target": 6,
+      "value": 82
+    },
+    {
+      "source": 6,
+      "target": 3,
+      "value": 120
+    },
+    {
+      "source": 7,
+      "target": 5,
+      "value": 248
+    },
+    {
+      "source": 7,
+      "target": 1,
+      "value": 74
+    },
+    {
+      "source": 0,
+      "target": 8,
+      "value": 204
+    },
+    {
+      "source": 8,
+      "target": 2,
+      "value": 381
+    },
+    {
+      "source": 4,
+      "target": 8,
+      "value": 66
+    },
+    {
+      "source": 2,
+      "target": 9,
+      "value": 247
+    },
+    {
+      "source": 4,
+      "target": 1,
+      "value": 70
+    },
+    {
+      "source": 1,
+      "target": 10,
+      "value": 29
+    },
+    {
+      "source": 10,
+      "target": 9,
+      "value": 16
+    },
+    {
+      "source": 11,
+      "target": 5,
+      "value": 201
+    },
+    {
+      "source": 11,
+      "target": 8,
+      "value": 84
+    },
+    {
+      "source": 11,
+      "target": 1,
+      "value": 81
+    },
+    {
+      "source": 1,
+      "target": 6,
+      "value": 28
+    },
+    {
+      "source": 5,
+      "target": 10,
+      "value": 76
+    },
+    {
+      "source": 10,
+      "target": 3,
+      "value": 120
+    },
+    {
+      "source": 7,
+      "target": 12,
+      "value": 4
+    },
+    {
+      "source": 12,
+      "target": 2,
+      "value": 17
+    },
+    {
+      "source": 7,
+      "target": 8,
+      "value": 94
+    },
+    {
+      "source": 6,
+      "target": 9,
+      "value": 27
+    },
+    {
+      "source": 11,
+      "target": 12,
+      "value": 1
+    },
+    {
+      "source": 8,
+      "target": 6,
+      "value": 37
+    },
+    {
+      "source": 0,
+      "target": 12,
+      "value": 8
+    },
+    {
+      "source": 8,
+      "target": 10,
+      "value": 30
+    },
+    {
+      "source": 4,
+      "target": 12,
+      "value": 5
+    },
+    {
+      "source": 12,
+      "target": 10,
+      "value": 1
+    }
+  ]
+}

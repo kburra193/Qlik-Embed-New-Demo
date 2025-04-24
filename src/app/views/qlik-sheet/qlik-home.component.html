@@ -1,0 +1,40 @@
+
+<!-- qlik-embed.component.html -->
+<div class="container">
+  <h1>qlik/embed-web-components quickstart example</h1>
+  <h2>
+    For a step-by-step tutorial
+    <a
+      href="https://qlik.dev/embed/qlik-embed/quickstart/qlik-embed-webcomponent-quickstart/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      click here
+    </a>.
+  </h2>
+  <h2>Make sure to configure the html files to point to your Qlik Cloud tenant.</h2>
+</div>
+
+<div class="container">
+  <h2>qlik-embed analytics/chart embeds a chart in the page.</h2>
+  <h3><i>Renders only nebula.js visualizations.</i></h3>
+  <div class="viz">
+    <qlik-embed
+      id="visualization"
+      ui="analytics/chart"
+      [attr.app-id]="appId"
+      [attr.object-id]="objectId"
+    ></qlik-embed>
+  </div>
+</div>
+
+<div class="container">
+  <h2>qlik-embed classic/app embeds the full Qlik Sense client in the page.</h2>
+  <div class="classic-app">
+    <qlik-embed
+      ui="classic/app"
+      [attr.app-id]="appId"
+      [attr.sheet-id]="sheetId"
+    ></qlik-embed>
+  </div>
+</div>
